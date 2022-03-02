@@ -157,6 +157,9 @@ m4_define([PCIE_ADAPTERS],
 m4_define([SERIAL_PORT_ADAPTERS],
 	[[[buspirate], [Bus Pirate], [BUS_PIRATE]]])
 
+m4_define([NETWORK_ADAPTERS],
+	[[[xvc], [Xilinx XVC TCP], [xvc]]])
+
 m4_define([OPTIONAL_LIBRARIES],
 	[[[capstone], [Use Capstone disassembly framework], []]])
 
@@ -263,7 +266,8 @@ AC_ARG_ADAPTERS([
   LIBFTDI_USB1_ADAPTERS
   LIBGPIOD_ADAPTERS,
   SERIAL_PORT_ADAPTERS,
-  LIBJAYLINK_ADAPTERS
+  LIBJAYLINK_ADAPTERS,
+  NETWORK_ADAPTERS
   ],[auto])
 
 AC_ARG_ENABLE([parport],
@@ -384,6 +388,10 @@ AC_ARG_ENABLE([internal-libjaylink],
 AC_ARG_ENABLE([remote-bitbang],
   AS_HELP_STRING([--enable-remote-bitbang], [Enable building support for the Remote Bitbang driver]),
   [build_remote_bitbang=$enableval], [build_remote_bitbang=no])
+
+AC_ARG_ENABLE([xvc],
+  AS_HELP_STRING([--enable-xvc], [Enable building support for the Xilinx XVC TCP jtag driver]),
+  [build_xvc=$enableval], [build_xvc=yes])
 
 AS_CASE(["${host_cpu}"],
   [i?86|x86*], [],
@@ -603,6 +611,13 @@ AS_IF([test "x$build_remote_bitbang" = "xyes"], [
   AC_DEFINE([BUILD_REMOTE_BITBANG], [0], [0 if you don't want the Remote Bitbang driver.])
 ])
 
+AS_IF([test "x$build_xvc" = "xyes"], [
+  build_bitbang=yes
+  AC_DEFINE([BUILD_XVC], [1], [1 if you want the Xilinx XVC TCP driver.])
+], [
+  AC_DEFINE([BUILD_XVC], [0], [0 if you don't want the Xilinx XVC TCP driver.])
+])
+
 AS_IF([test "x$build_sysfsgpio" = "xyes"], [
   build_bitbang=yes
   AC_DEFINE([BUILD_SYSFSGPIO], [1], [1 if you want the SysfsGPIO driver.])
@@ -770,6 +785,7 @@ AM_CONDITIONAL([USE_LIBJAYLINK], [test "x$use_libjaylink" = "xyes"])
 AM_CONDITIONAL([RSHIM], [test "x$build_rshim" = "xyes"])
 AM_CONDITIONAL([DMEM], [test "x$build_dmem" = "xyes"])
 AM_CONDITIONAL([HAVE_CAPSTONE], [test "x$enable_capstone" != "xno"])
+AM_CONDITIONAL([XVC], [test "x$build_xvc" = "xyes"])
 
 AM_CONDITIONAL([INTERNAL_JIMTCL], [test "x$use_internal_jimtcl" = "xyes"])
 AM_CONDITIONAL([INTERNAL_LIBJAYLINK], [test "x$use_internal_libjaylink" = "xyes"])
@@ -848,6 +864,7 @@ m4_foreach([adapter], [USB1_ADAPTERS,
 	LIBFTDI_USB1_ADAPTERS,
 	LIBGPIOD_ADAPTERS,
 	LIBJAYLINK_ADAPTERS, PCIE_ADAPTERS, SERIAL_PORT_ADAPTERS,
+	NETWORK_ADAPTERS,
 	OPTIONAL_LIBRARIES],
 	[s=m4_format(["%-40s"], ADAPTER_DESC([adapter]))
 	AS_CASE([$ADAPTER_VAR([adapter])],
