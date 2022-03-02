@@ -150,5 +150,8 @@ struct adapter_driver *adapter_drivers[] = {
 #if BUILD_AM335XGPIO == 1
 		&am335xgpio_adapter_driver,
 #endif
+#if BUILD_XVC == 1
+		&xvc_driver,
+#endif
 		NULL,
 	};

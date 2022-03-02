@@ -116,6 +116,7 @@ m4_define([ADAPTER_OPT], [m4_translit(ADAPTER_ARG($1), [_], [-])])
 m4_define([USB1_ADAPTERS],
 	[[[ftdi], [MPSSE mode of FTDI based devices], [FTDI]],
 	[[stlink], [ST-Link Programmer], [HLADAPTER_STLINK]],
+	[[xvc], [Xilinx XVC TCP], [xvc]],
 	[[ti_icdi], [TI ICDI JTAG Programmer], [HLADAPTER_ICDI]],
 	[[ulink], [Keil ULINK JTAG Programmer], [ULINK]],
 	[[angie], [ANGIE Adapter], [ANGIE]],
@@ -377,6 +378,10 @@ AC_ARG_ENABLE([remote-bitbang],
   AS_HELP_STRING([--enable-remote-bitbang], [Enable building support for the Remote Bitbang jtag driver]),
   [build_remote_bitbang=$enableval], [build_remote_bitbang=no])
 
+AC_ARG_ENABLE([xvc],
+  AS_HELP_STRING([--enable-xvc], [Enable building support for the Xilinx XVC TCP jtag driver]),
+  [build_xvc=$enableval], [build_xvc=yes])
+
 AS_CASE(["${host_cpu}"],
   [i?86|x86*], [],
   [
@@ -589,6 +594,13 @@ AS_IF([test "x$build_remote_bitbang" = "xyes"], [
   AC_DEFINE([BUILD_REMOTE_BITBANG], [0], [0 if you don't want the Remote Bitbang JTAG driver.])
 ])
 
+AS_IF([test "x$build_xvc" = "xyes"], [
+  build_bitbang=yes
+  AC_DEFINE([BUILD_XVC], [1], [1 if you want the Xilinx XVC TCP driver.])
+], [
+  AC_DEFINE([BUILD_XVC], [0], [0 if you don't want the Xilinx XVC TCP driver.])
+])
+
 AS_IF([test "x$build_sysfsgpio" = "xyes"], [
   build_bitbang=yes
   AC_DEFINE([BUILD_SYSFSGPIO], [1], [1 if you want the SysfsGPIO driver.])
@@ -755,6 +767,7 @@ AM_CONDITIONAL([USE_HIDAPI], [test "x$use_hidapi" = "xyes"])
 AM_CONDITIONAL([USE_LIBJAYLINK], [test "x$use_libjaylink" = "xyes"])
 AM_CONDITIONAL([RSHIM], [test "x$build_rshim" = "xyes"])
 AM_CONDITIONAL([HAVE_CAPSTONE], [test "x$enable_capstone" != "xno"])
+AM_CONDITIONAL([XVC], [test "x$build_xvc" = "xyes"])
 
 AM_CONDITIONAL([INTERNAL_JIMTCL], [test "x$use_internal_jimtcl" = "xyes"])
 AM_CONDITIONAL([INTERNAL_LIBJAYLINK], [test "x$use_internal_libjaylink" = "xyes"])

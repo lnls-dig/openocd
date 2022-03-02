@@ -615,6 +615,9 @@ emulation model of target hardware.
 @item @b{xlnx_pcie_xvc}
 @* A JTAG driver exposing Xilinx Virtual Cable over PCI Express to OpenOCD as JTAG/SWD interface.
 
+@item @b{xvc}
+@* A JTAG driver using Xilinx Virtual Cable over TCP to OpenOCD as JTAG interface.
+
 @item @b{linuxgpiod}
 @* A bitbang JTAG driver using Linux GPIO through library libgpiod.
 
@@ -3564,6 +3567,28 @@ Set chip id to transfer to the ESP USB bridge board
 @example
 espusbjtag chip_id 1
 @end example
+@end deffn
+
+@end deffn
+
+@deffn {Interface Driver} {xvc}
+This driver implements bitbang mode of JTAG devices
+using Xilinx Virtual Cable messages over TCP/IP.
+This implementation is XVC protocol 1.0 only, does not support 1.1 extension.
+Example configuration:
+
+@example
+xvc_host 192.168.3.192
+xvc_port 5000
+@end example
+
+@deffn {Config Command} {xvc_host} @var{hostname}
+Specifies the hostname of the remote debugger to connect to. Albeit
+it is possible to use UNIX sockets, it is not recommended.
+@end deffn
+
+@deffn {Config Command} {xvc_port} @var{number}
+Specifies the port of the remote process to connect to.
 @end deffn
 
 @end deffn
