@@ -550,7 +550,8 @@ static int jtagspi_sector_erase(struct flash_bank *bank, unsigned int sector)
 		return retval;
 
 	/* ATXP032/064/128 use always 4-byte addresses except for 0x03 read */
-	unsigned int addr_len = info->always_4byte ? 4 : info->addr_len;
+	//unsigned int addr_len = info->always_4byte ? 4 : info->addr_len;
+	unsigned int addr_len = 3;
 
 	retval = jtagspi_cmd(bank, info->dev.erase_cmd, fill_addr(bank->sectors[sector].offset, addr_len, addr),
 			addr_len, NULL, 0);
@@ -672,7 +673,8 @@ static int jtagspi_page_write(struct flash_bank *bank, const uint8_t *buffer, ui
 		return retval;
 
 	/* ATXP032/064/128 use always 4-byte addresses except for 0x03 read */
-	unsigned int addr_len = ((info->dev.read_cmd != 0x03) && info->always_4byte) ? 4 : info->addr_len;
+	//unsigned int addr_len = ((info->dev.read_cmd != 0x03) && info->always_4byte) ? 4 : info->addr_len;
+	unsigned int addr_len = 3;
 
 	retval = jtagspi_cmd(bank, info->dev.pprog_cmd, fill_addr(offset, addr_len, addr),
 		addr_len, (uint8_t *) buffer, count);
